@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat con Gemini-Pro</title>
+    <!-- Agregar Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen flex flex-col justify-center items-center">
+    <h1 class="text-4xl font-bold mb-8">Develop your site with Gemini-Pro</h1>
+    <form method="post" class="flex items-center">
+        {% csrf_token %}
+        <input type="text" name="prompt" placeholder="Ingrese su mensaje aquí" class="border border-gray-300 rounded-l-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-grow">
+        <button type="submit" class="bg-blue-500 text-white rounded-r-lg px-4 py-2 ml-2 hover:bg-blue-600">Enviar</button>
+    </form>
+    {% if text %}
+        <div class="mt-8 bg-white rounded-lg shadow-lg p-4">
+            <h2 class="text-xl font-bold mb-2">Respuesta de la IA:</h2>
+            <p>{{ text }}</p>
+        </div>
+    {% endif %}
+
+    {% if code %}
+    <div style="background-color: white;padding: 15px;">
+        {{ code|safe }}
+    </div>
+{% endif %}
+</body>
+</html>
