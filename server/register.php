@@ -40,7 +40,6 @@ function generateContent($textPrompt, $apiKey) {
 // Check if form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sanitize and fetch input data
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = password_hash(mysqli_real_escape_string($conn, $_POST['password']), PASSWORD_BCRYPT);
 
@@ -57,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $logo_path = mysqli_real_escape_string($conn, $_POST['logo_path']);
 
     // Insert user data
-    $sql_user = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
+    $sql_user = "INSERT INTO users (email, password) VALUES ('$email', '$password')";
     
     if ($conn->query($sql_user) === TRUE) {
         // Get the last inserted user ID
@@ -74,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($conn->query($sql_website) === TRUE) {
             // Generate content
-            $apiKey = 'YOUR_GOOGLE_API_KEY'; // Replace with your actual API key
+            $apiKey = 'AIzaSyByLctahA8JjQ329kIg8bZRehFT_TBdiFY'; // Replace with your actual API key
             $headerText = generateContent("Generate a header for business: $business_name", $apiKey);
             $aboutText = generateContent("Generate an about section for business: $business_name with description: $project_description", $apiKey);
             $servicesText = generateContent("Generate a services section for business: $business_name with services: $services_offered", $apiKey);
