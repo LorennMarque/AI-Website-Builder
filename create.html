@@ -3,9 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Register User and Website Information</title>
 </head>
 <body>
-    
+    <h1>Register User and Website Information</h1>
+    <form action="server/register.php" method="post">
+        <h2>User Information</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <h2>Website Information</h2>
+        <label for="business_name">Business Name:</label>
+        <input type="text" id="business_name" name="business_name" required><br><br>
+
+        <label for="project_description">Project Description:</label>
+        <textarea id="project_description" name="project_description"></textarea><br><br>
+
+        <label for="services_offered">Services Offered:</label>
+        <textarea id="services_offered" name="services_offered"></textarea><br><br>
+
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone"><br><br>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address"><br><br>
+
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country"><br><br>
+
+        <label for="instagram_url">Instagram URL:</label>
+        <input type="text" id="instagram_url" name="instagram_url"><br><br>
+
+        <label for="google_maps_url">Google Maps URL:</label>
+        <input type="text" id="google_maps_url" name="google_maps_url"><br><br>
+
+        <label for="facebook_url">Facebook URL:</label>
+        <input type="text" id="facebook_url" name="facebook_url"><br><br>
+
+        <label for="postal_code">Postal Code:</label>
+        <input type="text" id="postal_code" name="postal_code"><br><br>
+
+        <label for="logo_path">Logo Path:</label>
+        <input type="text" id="logo_path" name="logo_path"><br><br>
+
+        <input type="submit" value="Register">
+    </form>
 </body>
 </html>
