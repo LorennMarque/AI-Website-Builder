@@ -1,89 +1,312 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" class="h-full bg-gray-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register User and Website Information</title>
+    <title>Registro de Usuario e Información del Sitio Web</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .step-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .step-content.active {
+            display: block;
+            opacity: 1;
+        }
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+        }
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .loading-tips {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .progress-bar {
+            transition: width 0.3s ease-in-out;
+        }
+    </style>
 </head>
-<body>
-    <h1>Register User and Website Information</h1>
-    <form id="registerForm">
-        <h2>User Information</h2>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
+<body class="h-full flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin fa-3x text-white"></i>
+        </div>
+        <div class="loading-tips"></div>
+    </div>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
+    <div class="max-w-4xl w-full space-y-8">
+        <div>
+            <h2 class="mt-6 text-center text-4xl font-extrabold text-gray-900">
+                Registro de Usuario e Información del Sitio Web
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Complete los siguientes pasos para registrarse
+            </p>
+        </div>
 
-        <h2>Website Information</h2>
-        <label for="business_name">Business Name:</label>
-        <input type="text" id="business_name" name="business_name" required><br><br>
-
-        <label for="project_description">Project Description:</label>
-        <textarea id="project_description" name="project_description"></textarea><br><br>
-
-        <label for="phone">Phone:</label>
-        <input type="text" id="phone" name="phone"><br><br>
-
-        <label for="address">Address:</label>
-        <input type="text" id="address" name="address"><br><br>
-
-        <label for="country">Country:</label>
-        <input type="text" id="country" name="country"><br><br>
-
-        <label for="instagram_url">Instagram URL:</label>
-        <input type="text" id="instagram_url" name="instagram_url"><br><br>
-
-        <label for="google_maps_url">Google Maps URL:</label>
-        <input type="text" id="google_maps_url" name="google_maps_url"><br><br>
-
-        <label for="facebook_url">Facebook URL:</label>
-        <input type="text" id="facebook_url" name="facebook_url"><br><br>
-
-        <label for="postal_code">Postal Code:</label>
-        <input type="text" id="postal_code" name="postal_code"><br><br>
-
-        <label for="logo_path">Logo Path:</label>
-        <input type="text" id="logo_path" name="logo_path"><br><br>
-
-        <h2>Services</h2>
-        <div id="servicesContainer">
-            <div class="service">
-                <label for="service_name_1">Service Name:</label>
-                <input type="text" id="service_name_1" name="service_name[]" required><br><br>
+        <div class="mb-8">
+            <div class="flex justify-between mb-2">
+                <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-600 bg-indigo-200">
+                    Paso <span id="currentStepNumber">1</span> de <span id="totalSteps">3</span>
+                </span>
+            </div>
+            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-200">
+                <div id="progressBar" class="progress-bar shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500" style="width: 0%"></div>
             </div>
         </div>
-        <button type="button" id="addService">Add Another Service</button><br><br>
 
-        <input type="submit" value="Register">
-    </form>
+        <div class="bg-white p-8 rounded-xl shadow-lg">
+            <form id="registerForm" class="space-y-6">
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div class="flex justify-between mb-8">
+                        <div class="step-indicator flex-1 text-center">
+                            <i class="fas fa-user-circle text-4xl mb-2" data-step="1"></i>
+                            <p class="text-sm font-medium">Usuario</p>
+                        </div>
+                        <div class="step-indicator flex-1 text-center">
+                            <i class="fas fa-building text-4xl mb-2" data-step="2"></i>
+                            <p class="text-sm font-medium">Negocio</p>
+                        </div>
+                        <div class="step-indicator flex-1 text-center">
+                            <i class="fas fa-cogs text-4xl mb-2" data-step="3"></i>
+                            <p class="text-sm font-medium">Servicios</p>
+                        </div>
+                    </div>
 
+                    <div class="step-content active" data-step="1">
+                        <h3 class="text-xl font-medium text-gray-900 mb-6">Información del Usuario</h3>
+                        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                            <div>
+                                <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                                <input id="first_name" name="first_name" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="Juan">
+                            </div>
+                            <div>
+                                <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">Apellido</label>
+                                <input id="last_name" name="last_name" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="Pérez">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input id="email" name="email" type="email" autocomplete="email" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="tu@email.com">
+                            </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                                <input id="phone" name="phone" type="tel" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="+34 123 456 789">
+                            </div>
+                            <div>
+                                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                                <input id="password" name="password" type="password" autocomplete="new-password" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="••••••••">
+                            </div>
+                            <div>
+                                <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-2">Confirmar Contraseña</label>
+                                <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="••••••••">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-content" data-step="2">
+                        <h3 class="text-xl font-medium text-gray-900 mb-6">Información del Negocio</h3>
+                        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                            <div class="sm:col-span-2">
+                                <label for="business_name" class="block text-sm font-medium text-gray-700 mb-2">Nombre del Negocio</label>
+                                <input id="business_name" name="business_name" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="Tu Negocio S.A.">
+                            </div>
+                            <div>
+                                <label for="business_type" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Negocio</label>
+                                <select id="business_type" name="business_type" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md">
+                                    <option value="">Seleccione...</option>
+                                    <option value="startup">Startup</option>
+                                    <option value="pyme">PYME</option>
+                                    <option value="freelance">Freelance</option>
+                                    <option value="enterprise">Empresa Grande</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="industry" class="block text-sm font-medium text-gray-700 mb-2">Industria</label>
+                                <input id="industry" name="industry" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="Tecnología, Salud, etc.">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Dirección del Negocio</label>
+                                <input id="address" name="address" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="Calle, Ciudad, País">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="project_description" class="block text-sm font-medium text-gray-700 mb-2">Descripción del Proyecto</label>
+                                <textarea id="project_description" name="project_description" rows="4" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="Describe tu proyecto en detalle"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-content" data-step="3">
+                        <h3 class="text-xl font-medium text-gray-900 mb-6">Servicios</h3>
+                        <div id="servicesContainer" class="space-y-6">
+                            <div class="service">
+                                <label for="service_name_1" class="block text-sm font-medium text-gray-700 mb-2">Nombre del Servicio 1</label>
+                                <input type="text" id="service_name_1" name="service_name[]" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="Ej. Consultoría de Marketing">
+                            </div>
+                        </div>
+                        <button type="button" id="addService" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fas fa-plus mr-2"></i> Agregar Otro Servicio
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" id="prevStep" class="group relative w-1/4 flex justify-center py-3 px-4 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Anterior
+                    </button>
+                    <button type="button" id="nextStep" class="group relative w-1/4 flex justify-center py-3 px-4 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Siguiente
+                    </button>
+                </div>
+
+                <div>
+                    <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Publicar Ahora
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script>
         $(document).ready(function(){
+            let currentStep = 1;
+            const totalSteps = 3;
             let serviceCount = 1;
+
+            function updateStepVisibility() {
+                $('.step-content').removeClass('active');
+                $(`.step-content[data-step="${currentStep}"]`).addClass('active');
+                
+                if (currentStep === 1) {
+                    $('#prevStep').hide();
+                } else {
+                    $('#prevStep').show();
+                }
+
+                if (currentStep === totalSteps) {
+                    $('#nextStep').hide();
+                    $('button[type="submit"]').show();
+                } else {
+                    $('#nextStep').show();
+                    $('button[type="submit"]').hide();
+                }
+
+                $('.step-indicator i').removeClass('text-indigo-600').addClass('text-gray-400');
+                $(`.step-indicator i[data-step="${currentStep}"]`).removeClass('text-gray-400').addClass('text-indigo-600');
+
+                // Update progress bar and step counter
+                const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+                $('#progressBar').css('width', `${progress}%`);
+                $('#currentStepNumber').text(currentStep);
+                $('#totalSteps').text(totalSteps);
+            }
+
+            $('#nextStep').click(function() {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateStepVisibility();
+                }
+            });
+
+            $('#prevStep').click(function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateStepVisibility();
+                }
+            });
 
             $('#addService').click(function(){
                 serviceCount++;
                 $('#servicesContainer').append(`
-                    <div class="service">
-                        <label for="service_name_${serviceCount}">Service Name:</label>
-                        <input type="text" id="service_name_${serviceCount}" name="service_name[]" required><br><br>
+                    <div class="service mb-6 opacity-0 transition-opacity duration-300">
+                        <label for="service_name_${serviceCount}" class="block text-sm font-medium text-gray-700 mb-2">Nombre del Servicio ${serviceCount}</label>
+                        <input type="text" id="service_name_${serviceCount}" name="service_name[]" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-md" placeholder="Ej. Desarrollo Web">
                     </div>
                 `);
+                setTimeout(() => {
+                    $('.service:last-child').removeClass('opacity-0');
+                }, 50);
             });
 
             $('#registerForm').submit(function(e){
                 e.preventDefault();
+                $('.loading-overlay').fadeIn();
+                
+                const tips = [
+                    "Estamos procesando tu información...",
+                    "Casi listo...",
+                    "Preparando tu cuenta..."
+                ];
+
+                let tipIndex = 0;
+                function showNextTip() {
+                    $('.loading-tips').text(tips[tipIndex]).fadeIn(500).delay(2000).fadeOut(500, function() {
+                        tipIndex = (tipIndex + 1) % tips.length;
+                        showNextTip();
+                    });
+                }
+                showNextTip();
+
                 $.ajax({
-                    type: 'POST',
-                    url: 'server/register.php',
-                    data: $(this).serialize(),
-                    success: function(response){
-                        alert(response);
-                    }
-                });
+    type: 'POST',
+    url: 'server/register.php',
+    data: $(this).serialize(),
+    dataType: 'json', // Esperamos recibir JSON como respuesta
+    success: function(response) {
+        $('.loading-overlay').fadeOut();
+        if (response.success) {
+            // Crear un formulario oculto para enviar el valor por POST
+            var form = $('<form></form>').attr({
+                'method': 'post',
+                'action': 'index.php?id=' + response.website_id
             });
+
+            // Agregar el parámetro `celebrate` al formulario
+            $('<input>').attr({
+                'type': 'hidden',
+                'name': 'celebrate',
+                'value': 'true'
+            }).appendTo(form);
+
+            // Enviar el formulario
+            $(form).appendTo('body').submit();
+        } else if (response.error) {
+            alert(response.error);
+        }
+    },
+    error: function(xhr, status, error) {
+        $('.loading-overlay').fadeOut();
+        console.log('Error: ' + error);
+        alert('Error: ' + error);
+    }
+});
+
+            });
+
+            updateStepVisibility();
         });
     </script>
 </body>

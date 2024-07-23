@@ -26,6 +26,8 @@
       id INT AUTO_INCREMENT PRIMARY KEY,
       email VARCHAR(100) NOT NULL UNIQUE,
       password VARCHAR(255) NOT NULL,
+      first_name VARCHAR(100) NOT NULL,
+      last_name VARCHAR(100) NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       active BOOLEAN DEFAULT TRUE
@@ -35,8 +37,8 @@
       id INT AUTO_INCREMENT PRIMARY KEY,
       website_id INT,
       content TEXT NOT NULL,
-      description TEXT,
-      icon VARCHAR(255),
+      description TEXT NOT NULL,
+      icon VARCHAR(255) NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       active BOOLEAN DEFAULT TRUE
@@ -46,7 +48,7 @@
       id INT AUTO_INCREMENT PRIMARY KEY,
       user_id INT NOT NULL,
       business_name VARCHAR(100) NOT NULL,
-      project_description TEXT,
+      project_description TEXT NOT NULL,
       phone VARCHAR(20),
       email VARCHAR(100),
       address VARCHAR(255),
@@ -56,19 +58,16 @@
       facebook_url VARCHAR(255),
       postal_code VARCHAR(20),
       logo_path VARCHAR(255),
-      services_id INT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       active BOOLEAN DEFAULT TRUE,
-      FOREIGN KEY (user_id) REFERENCES users(id),
-      FOREIGN KEY (services_id) REFERENCES services(id)
+      FOREIGN KEY (user_id) REFERENCES users(id)
    );
 
    CREATE TABLE sections (
       id INT AUTO_INCREMENT PRIMARY KEY,
       type VARCHAR(50) NOT NULL,
       content TEXT,
-      img_route VARCHAR(255),
       website_id INT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

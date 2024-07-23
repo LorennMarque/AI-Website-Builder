@@ -2,10 +2,10 @@
 require("server/db.php");
 
 $website_id = intval($_GET['id']);
+$celebrate = isset($_POST['celebrate']) && $_POST['celebrate'] === 'true';
 
-$sql_website_info = "SELECT * FROM website_information WHERE id = $website_id";
+$sql_website_info = "SELECT * FROM website_information WHERE id = $website_id AND active = 1";
 $result_website_info = $conn->query($sql_website_info);
-
 if ($result_website_info->num_rows > 0) {
     $website_info = $result_website_info->fetch_assoc();
 } else {
@@ -14,7 +14,7 @@ if ($result_website_info->num_rows > 0) {
 
 
 // Get the data of the sections and services of the website
-$sql_sections = "SELECT * FROM sections WHERE website_id = $website_id";
+$sql_sections = "SELECT * FROM sections WHERE website_id = $website_id AND active = 1";
 $result_sections = $conn->query($sql_sections);
 
 if ($result_sections->num_rows > 0) {
@@ -23,7 +23,7 @@ if ($result_sections->num_rows > 0) {
     die("No sections found for this website ID.");
 }
 
-$sql_services = "SELECT * FROM services WHERE website_id = $website_id";
+$sql_services = "SELECT * FROM services WHERE website_id = $website_id AND active = 1";
 $result_services = $conn->query($sql_services);
 
 if ($result_services->num_rows > 0) {
@@ -43,6 +43,7 @@ $conn->close();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --primary-color: #4a90e2;
@@ -243,7 +244,7 @@ $conn->close();
 </head>
 <body>
     <header>
-        <nav class="container">
+        <nav class="container" style="padding: 10px 0;">
             <a href="#" class="logo"><?php echo htmlspecialchars($website_info['business_name']); ?></a>
             <div class="nav-links">
                 <a href="#home">Inicio</a>
@@ -257,7 +258,7 @@ $conn->close();
     <section id="hero">
         <div class="container hero-content">
             <h1><?php echo htmlspecialchars($sections[0]['content']); ?></h1>
-            <p>Expertos en fumigación y control de plagas en San Juan desde 1999</p>
+            <p><?php echo htmlspecialchars($sections[1]['content']); ?></p>
             <a href="#contact" class="btn">Contáctanos ahora</a>
         </div>
     </section>
@@ -265,7 +266,7 @@ $conn->close();
     <section id="about">
         <div class="container">
             <h2>Sobre <?php echo htmlspecialchars($website_info['business_name']); ?></h2>
-            <p><?php echo htmlspecialchars($sections[1]['content']); ?></p>
+            <p><?php echo htmlspecialchars($sections[2]['content']); ?></p>
         </div>
     </section>
 
@@ -323,9 +324,6 @@ $conn->close();
                 <label for="content_<?php echo htmlspecialchars($section['id']); ?>">Content:</label>
                 <textarea id="content_<?php echo htmlspecialchars($section['id']); ?>" name="content[]" rows="4" cols="50"><?php echo htmlspecialchars($section['content']); ?></textarea><br><br>
 
-                <label for="img_route_<?php echo htmlspecialchars($section['id']); ?>">Image Route:</label>
-                <input type="text" id="img_route_<?php echo htmlspecialchars($section['id']); ?>" name="img_route[]" value="<?php echo htmlspecialchars($section['img_route']); ?>"><br><br>
-
                 <label for="active_<?php echo htmlspecialchars($section['id']); ?>">Active:</label>
                 <input type="checkbox" id="active_<?php echo htmlspecialchars($section['id']); ?>" name="active[]" value="1" <?php echo $section['active'] ? 'checked' : ''; ?>><br><br>
             </fieldset>
@@ -351,3 +349,14 @@ $conn->close();
             });
         });
     </script>
+    <?php if ($celebrate): ?>
+        <script>
+            // Mostrar confetti
+            confetti({
+                particleCount: 400,
+                spread: 300,
+                origin: { y: -0.2 },
+                angle: 270
+            });
+        </script>
+    <?php endif; ?>

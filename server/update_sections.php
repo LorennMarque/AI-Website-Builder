@@ -12,10 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($_POST['section_id'] as $index => $section_id) {
             $section_id = intval($section_id);
             $content = mysqli_real_escape_string($conn, $_POST['content'][$index]);
-            $img_route = mysqli_real_escape_string($conn, $_POST['img_route'][$index]);
             $active = isset($_POST['active'][$index]) ? 1 : 0;
             
-            $sql = "UPDATE sections SET content = '$content', img_route = '$img_route', active = $active, updated_at = NOW() WHERE id = $section_id AND website_id = $website_id";
+            $sql = "UPDATE sections SET content = '$content', active = $active, updated_at = NOW() WHERE id = $section_id AND website_id = $website_id";
             $updateQueries[] = $sql;
         }
         

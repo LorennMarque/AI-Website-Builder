@@ -34,18 +34,20 @@ function generateContent($textPrompt, $apiKey) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = password_hash(mysqli_real_escape_string($conn, $_POST['password']), PASSWORD_BCRYPT);
+    $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
+    $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
     $business_name = mysqli_real_escape_string($conn, $_POST['business_name']);
     $project_description = mysqli_real_escape_string($conn, $_POST['project_description']);
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-    $address = mysqli_real_escape_string($conn, $_POST['address']);
-    $country = mysqli_real_escape_string($conn, $_POST['country']);
-    $instagram_url = mysqli_real_escape_string($conn, $_POST['instagram_url']);
-    $google_maps_url = mysqli_real_escape_string($conn, $_POST['google_maps_url']);
-    $facebook_url = mysqli_real_escape_string($conn, $_POST['facebook_url']);
-    $postal_code = mysqli_real_escape_string($conn, $_POST['postal_code']);
-    $logo_path = mysqli_real_escape_string($conn, $_POST['logo_path']);
+    $address = isset($_POST['address']) ? mysqli_real_escape_string($conn, $_POST['address']) : '';
+    $country = isset($_POST['country']) ? mysqli_real_escape_string($conn, $_POST['country']) : '';
+    $instagram_url = isset($_POST['instagram_url']) ? mysqli_real_escape_string($conn, $_POST['instagram_url']) : '';
+    $google_maps_url = isset($_POST['google_maps_url']) ? mysqli_real_escape_string($conn, $_POST['google_maps_url']) : '';
+    $facebook_url = isset($_POST['facebook_url']) ? mysqli_real_escape_string($conn, $_POST['facebook_url']) : '';
+    $postal_code = isset($_POST['postal_code']) ? mysqli_real_escape_string($conn, $_POST['postal_code']) : '';
+    $logo_path = isset($_POST['logo_path']) ? mysqli_real_escape_string($conn, $_POST['logo_path']) : '';
 
-    $sql_user = "INSERT INTO users (email, password) VALUES ('$email', '$password')";
+    $sql_user = "INSERT INTO users (email, password, first_name, last_name) VALUES ('$email', '$password', '$first_name', '$last_name')";
     
     if ($conn->query($sql_user) === TRUE) {
         $user_id = $conn->insert_id;
@@ -62,15 +64,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $website_id = $conn->insert_id;
             $apiKey = 'AIzaSyByLctahA8JjQ329kIg8bZRehFT_TBdiFY';
 
-            $headerText = generateContent("Generate a single h1 for the website of business called: $business_name that is about: $project_description. You estrictly need to answer only one header, no formatting nor extra text", $apiKey);
-            $aboutText = generateContent("Generate an about description for the website of business: $business_name with description: $project_description. You estrictly need to answer only the text, no formatting nor extra text", $apiKey);
+            $headerText = generateContent("Generate a single h1 for the website of business called: $business_name that is about: $project_description. You estrictly need to answer only one header, no formatting nor extra text nor markdown", $apiKey);
+            $subtitleText = generateContent("Generate a single p for the title: '$headerText' of website of business called: $business_name that is about: $project_description. You estrictly need to answer only one short description, no formatting nor extra text", $apiKey);
+            $aboutText = generateContent("Generate an expert and SEO description for the about secion of the website of business: $business_name with description: $project_description. You estrictly need to answer only the necesary text, no formatting nor extra text", $apiKey);
             $headerText = mysqli_real_escape_string($conn, $headerText);
             $aboutText = mysqli_real_escape_string($conn, $aboutText);
 
             $sql_sections = "
-                INSERT INTO sections (type, content, img_route, website_id, created_at, updated_at, active) VALUES
-                ('hero', '$headerText', '', $website_id, NOW(), NOW(), TRUE),
-                ('about', '$aboutText', '', $website_id, NOW(), NOW(), TRUE)
+                INSERT INTO sections (type, content, website_id, created_at, updated_at, active) VALUES
+                ('hero', '$headerText',  $website_id, NOW(), NOW(), TRUE),
+                ('subtitle', '$subtitleText',  $website_id, NOW(), NOW(), TRUE),
+                ('about', '$aboutText',  $website_id, NOW(), NOW(), TRUE)
             ";
 
             if ($conn->query($sql_sections) === TRUE) {
@@ -90,16 +94,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo "Error: " . $sql_services . "<br>" . $conn->error;
                     }
                 }
-                echo "New user, website information, sections, and services registered successfully";
+                echo json_encode(array("success" => true, "website_id" => $website_id));
             } else {
-                echo "Error: " . $sql_sections . "<br>" . $conn->error;
+                echo json_encode(array("error" => $sql_sections, "message" => $conn->error));
             }
         } else {
-            echo "Error: " . $sql_website . "<br>" . $conn->error;
+            echo json_encode(array("error" => $sql_website, "message" => $conn->error));
         }
     } else {
-        echo "Error: " . $sql_user . "<br>" . $conn->error;
+        echo json_encode(array("error" => $sql_user, "message" => $conn->error));
     }
     $conn->close();
 }
-?>
