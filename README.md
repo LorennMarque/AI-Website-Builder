@@ -58,11 +58,15 @@
       facebook_url VARCHAR(255),
       postal_code VARCHAR(20),
       logo_path VARCHAR(255),
+      banner_path VARCHAR(255), 
+      primary_color VARCHAR(7), 
+      secondary_color VARCHAR(7),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       active BOOLEAN DEFAULT TRUE,
       FOREIGN KEY (user_id) REFERENCES users(id)
    );
+
 
    CREATE TABLE sections (
       id INT AUTO_INCREMENT PRIMARY KEY,
