@@ -1,6 +1,9 @@
 <?php
 require("db.php");
+require 'vendor/autoload.php'; // Include PHPMailer
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 function generateContent($textPrompt, $apiKey) {
     $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . $apiKey;
     $data = [
@@ -28,6 +31,33 @@ function generateContent($textPrompt, $apiKey) {
         return $responseData['candidates'][0]['content']['parts'][0]['text'];
     } else {
         return 'No content generated.';
+    }
+}
+
+function sendWelcomeEmail($email, $firstName) {
+    $mail = new PHPMailer(true);
+    try {
+        //Server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.example.com'; // Set the SMTP server to send through
+        $mail->SMTPAuth = true;
+        $mail->Username = 'your_email@example.com'; // SMTP username
+        $mail->Password = 'your_email_password'; // SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        //Recipients
+        $mail->setFrom('your_email@example.com', 'Lorenzo');
+        $mail->addAddress($email, $firstName);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Te damos la bienvenida!';
+        $mail->Body = "<h1>Felicitaciones por crear tu sitio web, $firstName!</h1><p>Para modificarlo puedes acceder en cualquier momento a URL con tu usuario y contraseña, si necesitas ayuda puedes contactarte con lorenzomarquesini@gmail.com</p>";
+
+        $mail->send();
+    } catch (Exception $e) {
+        error_log("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
     }
 }
 
@@ -97,6 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 session_start();
                 $_SESSION['user_id'] = $user_id;
                 $_SESSION['website_id'] = $website_id;
+                sendWelcomeEmail($email, $first_name);
                 echo json_encode(array("success" => true, "website_id" => $website_id));
             } else {
                 echo json_encode(array("error" => $sql_sections, "message" => $conn->error));
