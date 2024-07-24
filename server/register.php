@@ -94,6 +94,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo "Error: " . $sql_services . "<br>" . $conn->error;
                     }
                 }
+                session_start();
+                $_SESSION['user_id'] = $user_id;
+                $_SESSION['website_id'] = $website_id;
                 echo json_encode(array("success" => true, "website_id" => $website_id));
             } else {
                 echo json_encode(array("error" => $sql_sections, "message" => $conn->error));

@@ -13,24 +13,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $primary_color = mysqli_real_escape_string($conn, $_POST['primary_color']);
     $secondary_color = mysqli_real_escape_string($conn, $_POST['secondary_color']);
 
+    // Retrieve current paths from the database if no new files are uploaded
+    $sql_get_paths = "SELECT logo_path, banner_path FROM website_information WHERE id = $website_id";
+    $result = $conn->query($sql_get_paths);
+    $current_paths = $result->fetch_assoc();
+
     // Handle file uploads
-    $logo_path = '';
+    $logo_path = isset($_FILES['logo_path']) && $_FILES['logo_path']['error'] == UPLOAD_ERR_OK ? 
+        'uploads/logos/' . basename($_FILES['logo_path']['name']) : 
+        $current_paths['logo_path'];
+
     if (isset($_FILES['logo_path']) && $_FILES['logo_path']['error'] == UPLOAD_ERR_OK) {
         $logo_dir = 'uploads/logos/';
         if (!is_dir($logo_dir)) {
             mkdir($logo_dir, 0777, true);
         }
-        $logo_path = $logo_dir . basename($_FILES['logo_path']['name']);
         move_uploaded_file($_FILES['logo_path']['tmp_name'], $logo_path);
     }
 
-    $banner_path = '';
+    $banner_path = isset($_FILES['banner_path']) && $_FILES['banner_path']['error'] == UPLOAD_ERR_OK ? 
+        'uploads/banners/' . basename($_FILES['banner_path']['name']) : 
+        $current_paths['banner_path'];
+
     if (isset($_FILES['banner_path']) && $_FILES['banner_path']['error'] == UPLOAD_ERR_OK) {
         $banner_dir = 'uploads/banners/';
         if (!is_dir($banner_dir)) {
             mkdir($banner_dir, 0777, true);
         }
-        $banner_path = $banner_dir . basename($_FILES['banner_path']['name']);
         move_uploaded_file($_FILES['banner_path']['tmp_name'], $banner_path);
     }
 
@@ -87,3 +96,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $conn->close();
 }
+?>
