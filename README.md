@@ -1,5 +1,13 @@
 # GeneraTuWeb.com
 
+## Features
+1. Multi-Step form
+2. AI content Generation
+3. User Registration
+4. Email Notifications.
+5. Edit interface
+6. Auth
+
 ## Setup
 
 1. **Database Credentials:**
