@@ -1,14 +1,20 @@
-# Ai-Chatbot-Website-Builder
+# GeneraTuWeb.com
 
 ## Setup
 
 1. **Database Credentials:**
-   - Create a `.env` file in the `root` directory with the following format:
+   - Create a `.env` file with the following format:
      ```
      DB_HOST=localhost
      DB_NAME=webuilder
      DB_USER=root
      DB_PASSWORD=your_password
+     SMTP_HOST=smtp.example.com
+     SMTP_AUTH=true
+     SMTP_USERNAME=your_email@example.com
+     SMTP_PASSWORD=your_email_password
+     SMTP_SECURE=ENCRYPTION_STARTTLS
+     SMTP_PORT=587
      ```
    - Replace `your_password` with your actual database password.
 
