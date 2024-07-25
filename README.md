@@ -1,4 +1,5 @@
-# ![Tiny Logo]([path/to/tiny-logo.pn](https://generatuweb.com/assets/generatuweb.png)g) GeneraTuWeb.com
+# <img src="https://generatuweb.com/assets/generatuweb.png" alt="GeneraTuWeb.com" style="height:40px;width:40px"> GeneraTuWeb.com
+This AI-powered platform uses pre-created templates to generate websites effortlessly. By leveraging the Gemini API, it fills in the content with artificial intelligence based on the information provided by the user. The generated site can then be customized to meet specific needs. Check out the [live version](https://generatuweb.com)
 
 ## Features
 1. Multi-Step form
