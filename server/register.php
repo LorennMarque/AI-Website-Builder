@@ -39,15 +39,15 @@ function sendWelcomeEmail($email, $firstName) {
     try {
         //Server settings
         $mail->isSMTP();
-        $mail->Host = 'smtp.example.com'; // Set the SMTP server to send through
-        $mail->SMTPAuth = true;
-        $mail->Username = 'your_email@example.com'; // SMTP username
-        $mail->Password = 'your_email_password'; // SMTP password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        $mail->Host = getenv('SMTP_HOST'); // Set the SMTP server to send through
+        $mail->SMTPAuth = getenv('SMTP_AUTH') === 'true';
+        $mail->Username = getenv('SMTP_USERNAME'); // SMTP username
+        $mail->Password = getenv('SMTP_PASSWORD'); // SMTP password
+        $mail->SMTPSecure = getenv('SMTP_SECURE');
+        $mail->Port = getenv('SMTP_PORT');
 
         //Recipients
-        $mail->setFrom('your_email@example.com', 'Lorenzo');
+        $mail->setFrom(getenv('SMTP_USERNAME'), 'Lorenzo');
         $mail->addAddress($email, $firstName);
 
         // Content
@@ -92,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($conn->query($sql_website) === TRUE) {
             $website_id = $conn->insert_id;
-            $apiKey = 'AIzaSyByLctahA8JjQ329kIg8bZRehFT_TBdiFY';
+            $apiKey = getenv('GEMINI_API_KEY');
 
             $headerText = generateContent("Generate a single h1 for the website of business called: $business_name that is about: $project_description. You estrictly need to answer only one header, no formatting nor extra text nor markdown", $apiKey);
             $subtitleText = generateContent("Generate a single p for the title: '$headerText' of website of business called: $business_name that is about: $project_description. You estrictly need to answer only one short description, no formatting nor extra text", $apiKey);

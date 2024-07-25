@@ -3,7 +3,7 @@
 ## Setup
 
 1. **Database Credentials:**
-   - Create a `.env` file in the `server` directory with the following format:
+   - Create a `.env` file in the `root` directory with the following format:
      ```
      DB_HOST=localhost
      DB_NAME=webuilder

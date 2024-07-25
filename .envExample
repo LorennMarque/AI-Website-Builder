@@ -1,0 +1,10 @@
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=
+DB_NAME=webuilder
+SMTP_HOST=smtp.example.com
+SMTP_AUTH=true
+SMTP_USERNAME=your_email@example.com
+SMTP_PASSWORD=your_email_password
+SMTP_SECURE=ENCRYPTION_STARTTLS
+SMTP_PORT=587
